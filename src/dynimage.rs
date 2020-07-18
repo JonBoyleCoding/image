@@ -501,6 +501,11 @@ impl DynamicImage {
         image_to_bytes(self)
     }
 
+    /// Returns a slice to this image's pixels
+    pub fn as_bytes(&self) -> &[u8] {
+        image_as_bytes(self)
+    }
+
     /// Return this image's color type.
     pub fn color(&self) -> color::ColorType {
         match *self {
@@ -971,6 +976,33 @@ fn image_to_bytes(image: &DynamicImage) -> Vec<u8> {
         DynamicImage::ImageRgb16(ref a) => a.as_bytes().to_vec(),
 
         DynamicImage::ImageRgba16(ref a) => a.as_bytes().to_vec(),
+    }
+}
+
+fn image_as_bytes(image: &DynamicImage) -> &[u8] {
+    use crate::traits::EncodableLayout;
+
+    match *image {
+        // TODO: consider transmuting
+        DynamicImage::ImageLuma8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageLumaA8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageRgb8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageRgba8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageBgr8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageBgra8(ref a) => a.inner_pixels(),
+
+        DynamicImage::ImageLuma16(ref a) => a.inner_pixels().as_bytes(),
+
+        DynamicImage::ImageLumaA16(ref a) => a.inner_pixels().as_bytes(),
+
+        DynamicImage::ImageRgb16(ref a) => a.inner_pixels().as_bytes(),
+
+        DynamicImage::ImageRgba16(ref a) => a.inner_pixels().as_bytes(),
     }
 }
 
